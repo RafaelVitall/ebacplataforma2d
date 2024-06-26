@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     //DECLARAÇÕES   
     public Rigidbody2D rb;
+    public Animator animator;
 
     public Vector2 friction = new Vector2(.1f, 0f);
 
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour
     public float animDuration = .3f;
     public float splashDuration = .3f;
     public Ease ease = Ease.OutBack;
+    public float flipDuration = .1f;
     private void Update()
     {
        HandleJump();
@@ -37,15 +39,27 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             rb.velocity = new Vector2(-_currentSpeed, rb.velocity.y);
+            animator.SetBool("isRunning", true);
+            if(rb.transform.localScale.x != -1)
+            {
+                rb.transform.DOScaleX(-1, flipDuration);
+            }
 
             //rb.MovePosition(rb.position - velocity * Time.deltaTime);
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             rb.velocity = new Vector2(_currentSpeed, rb.velocity.y);
-
-
+            animator.SetBool("isRunning", true);
+            if (rb.transform.localScale.x != 1)
+            {
+                rb.transform.DOScaleX(1, flipDuration);
+            }
             //rb.MovePosition(rb.position + velocity * Time.deltaTime);
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
         }
 
         if(rb.velocity.x > 0)
@@ -63,7 +77,7 @@ public class Player : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space))
         {
             rb.velocity = Vector2.up * forceJump;
-            rb.transform.localScale = Vector2.one;
+            //rb.transform.localScale = Vector2.one;
 
             DOTween.Kill(rb.transform);
 
